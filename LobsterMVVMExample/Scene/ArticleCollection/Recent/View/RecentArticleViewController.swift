@@ -9,8 +9,7 @@
 import UIKit
 import RxSwift
 
-final class RecentArticleViewController: UIViewController, LoadingView, UITableViewDataSource {
-    private let disposeBag = DisposeBag()
+final class RecentArticleViewController: ViewLifeCycleViewController, LoadingView, UITableViewDataSource {
     private var articles: [RecentArticleViewModel] = []
     private let viewModel: ViewModel<RecentArticleAction, RecentArticleResult>
     
@@ -23,7 +22,10 @@ final class RecentArticleViewController: UIViewController, LoadingView, UITableV
     
     init(viewModel: ViewModel<RecentArticleAction, RecentArticleResult>) {
         self.viewModel = viewModel
+        
         super.init(nibName: nil, bundle: nil)
+        
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -36,16 +38,6 @@ final class RecentArticleViewController: UIViewController, LoadingView, UITableV
         super.viewDidLoad()
         
         configureSubviews()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        handle(
-            transformation: viewModel
-                .transform(action: .viewWillAppear)
-                .share(replay: 1, scope: .forever)
-        )
     }
     
     // MARK: - LoadingView
@@ -89,20 +81,30 @@ final class RecentArticleViewController: UIViewController, LoadingView, UITableV
         articleList.register(UINib(nibName: RecentArticleTableViewCell.identifier, bundle: nil), forCellReuseIdentifier: RecentArticleTableViewCell.identifier)
     }
     
-    private func handle(transformation: Observable<RecentArticleResult>) {
-        transformation
+    private func bind() {
+        let action = RecentArticleAction(
+            viewWillAppear: viewLifeCycle.asObservable()
+                .filter { .viewWillAppear == $0 }
+                .map { _ in }
+        )
+        
+        let result = viewModel
+            .transform(action: action)
+            .share(replay: 1, scope: .forever)
+        
+        result
             .map { $0.value() }
             .compactMap { $0 }
             .bind(to: rx.recentTitle)
             .disposed(by: disposeBag)
         
-        let articles: Observable<[RecentArticleViewModel]> = transformation
+        let articles: Observable<[RecentArticleViewModel]> = result
             .map { $0.value() }
             .compactMap { $0 }
             .share(replay: 1, scope: .forever)
         
         Observable.merge(
-            transformation.filter { .loading == $0 }.map { _ in true },
+            result.filter { .loading == $0 }.map { _ in true },
             articles.map { _ in false }
         )
         .bind(to: rx.loading)

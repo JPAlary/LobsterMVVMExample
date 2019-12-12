@@ -30,24 +30,24 @@ struct RecentArticleInteractor: Interactor {
     // MARK: - Interactor
     
     func perform(action: RecentArticleAction) -> Observable<RecentArticleResult> {
-        switch action {
-        case .viewWillAppear:
-            return repository
-                .getLatest()
-                .map { result in
-                    switch result {
-                    case .value(let articles):
-                        return .articles(articles.map { RecentArticleViewModel(localization: self.localization, article: $0) })
-                    case .notFound:
-                        return .error(message: self.localization.translate(for: Constant.TranslationKey.emptyCollection))
-                    case .error(let error):
-                        guard let appError = error as? AppError else {
-                            fatalError("\(#function) - error from repository should be instance of `AppError`")
+        action
+            .viewWillAppear
+            .flatMap { _ in
+                self.repository.getLatest()
+                    .map { result in
+                        switch result {
+                        case .value(let articles):
+                            return .articles(articles.map { RecentArticleViewModel(localization: self.localization, article: $0) })
+                        case .notFound:
+                            return .error(message: self.localization.translate(for: Constant.TranslationKey.emptyCollection))
+                        case .error(let error):
+                            guard let appError = error as? AppError else {
+                                fatalError("\(#function) - error from repository should be instance of `AppError`")
+                            }
+                            return .error(message: appError.message(with: self.localization))
                         }
-                        return .error(message: appError.message(with: self.localization))
-                    }
                 }
                 .startWith(.loading)
-        }
+            }
     }
 }

@@ -12,20 +12,22 @@ import RxSwift
 
 final class RecentTitleInteractorTests: XCTestCase {
     
-    func test_givenMockLocalization_whenPerformViewWillAppearAction_thenShouldReturnTitleCase() {
+    func test_givenMockLocalization_whenViewWillAppearActionIsTriggered_thenShouldReturnTitleCase() {
         let disposeBag = DisposeBag()
+        let viewWillAppear = PublishSubject<Void>()
         
         // Given
         let interactor = RecentTitleInteractor(localization: MockLocalization())
-        
-        // When
         var results: [RecentArticleResult] = []
         interactor
-            .perform(action: .viewWillAppear)
+            .perform(action: RecentArticleAction(viewWillAppear: viewWillAppear))
             .subscribe(onNext: { result in
                 results.append(result)
             })
             .disposed(by: disposeBag)
+        
+        // When
+        viewWillAppear.onNext(())
         
         // Then
         XCTAssertEqual(
