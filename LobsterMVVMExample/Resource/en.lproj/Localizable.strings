@@ -1,0 +1,14 @@
+/* 
+  Localizables.strings
+  LobsterMVVMExample
+
+  Created by Jean Pierre Alary on 11/12/2019.
+  Copyright © 2019 Jean-Pierre Alary. All rights reserved.
+*/
+
+"app.error.default" = "Something went wrong, please try again later";
+"app.error.network" = "It seems you don't have network connection";
+
+"scene.article.collection.recent.empty_collection" = "No articles has been found";
+"scene.article.collection.recent.label.title" = "Recent articles";
+"scene.article.collection.recent.cell.label.author" = "By %@";
