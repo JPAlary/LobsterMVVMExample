@@ -6,6 +6,8 @@
 //  Copyright © 2019 Jean-Pierre Alary. All rights reserved.
 //
 
-enum RecentArticleAction {
-    case viewWillAppear
+import RxSwift
+
+struct RecentArticleAction {
+    let viewWillAppear: Observable<Void>
 }

@@ -12,23 +12,25 @@ import RxSwift
 
 final class RecentArticleInteractorTests: XCTestCase {
     
-    func test_givenErrorFromRepository_whenPerformViewWillAppear_thenShouldReturnLoadingAndErrorCases() {
+    func test_givenErrorFromRepository_whenViewWillAppearActionIsTriggered_thenShouldReturnLoadingAndErrorCases() {
         let disposeBag = DisposeBag()
+        let viewWillAppear = PublishSubject<Void>()
         
         // Given
         let interactor = RecentArticleInteractor(
             repository: MockArticleCollectionRepository(getLatest: .just(.error(StubAppError()))),
             localization: MockLocalization()
         )
-        
-        // When
         var results: [RecentArticleResult] = []
         interactor
-            .perform(action: .viewWillAppear)
+            .perform(action: RecentArticleAction(viewWillAppear: viewWillAppear))
             .subscribe(onNext: { result in
                 results.append(result)
             })
             .disposed(by: disposeBag)
+
+        // When
+        viewWillAppear.onNext(())
         
         // Then
         XCTAssertEqual(
@@ -40,23 +42,25 @@ final class RecentArticleInteractorTests: XCTestCase {
         )
     }
     
-    func test_givenNotFoundFromRepository_whenPerformViewWillAppear_thenShouldReturnLoadingAndErrorCases() {
+    func test_givenNotFoundFromRepository_whenViewWillAppearActionIsTriggered_thenShouldReturnLoadingAndErrorCases() {
         let disposeBag = DisposeBag()
+        let viewWillAppear = PublishSubject<Void>()
         
         // Given
         let interactor = RecentArticleInteractor(
             repository: MockArticleCollectionRepository(getLatest: .just(.notFound)),
             localization: MockLocalization()
         )
-        
-        // When
         var results: [RecentArticleResult] = []
         interactor
-            .perform(action: .viewWillAppear)
+            .perform(action: RecentArticleAction(viewWillAppear: viewWillAppear))
             .subscribe(onNext: { result in
                 results.append(result)
             })
             .disposed(by: disposeBag)
+            
+        // When
+        viewWillAppear.onNext(())
         
         // Then
         XCTAssertEqual(
@@ -68,23 +72,25 @@ final class RecentArticleInteractorTests: XCTestCase {
         )
     }
     
-    func test_givenArticlesFromRepository_whenPerformViewWillAppear_thenShouldReturnLoadingAndArticleCases() {
+    func test_givenArticlesFromRepository_whenViewWillAppearActionIsTriggered_thenShouldReturnLoadingAndArticleCases() {
         let disposeBag = DisposeBag()
+        let viewWillAppear = PublishSubject<Void>()
         
         // Given
         let interactor = RecentArticleInteractor(
             repository: MockArticleCollectionRepository(getLatest: .just(.value([Article.defaultStub, Article.defaultStub]))),
             localization: MockLocalization()
         )
-        
-        // When
         var results: [RecentArticleResult] = []
         interactor
-            .perform(action: .viewWillAppear)
+            .perform(action: RecentArticleAction(viewWillAppear: viewWillAppear))
             .subscribe(onNext: { result in
                 results.append(result)
             })
             .disposed(by: disposeBag)
+        
+        // When
+        viewWillAppear.onNext(())
         
         // Then
         XCTAssertEqual(

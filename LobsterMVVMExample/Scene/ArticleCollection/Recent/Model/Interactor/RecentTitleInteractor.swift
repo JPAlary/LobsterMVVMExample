@@ -26,10 +26,8 @@ struct RecentTitleInteractor: Interactor {
     // MARK: - Interactor
     
     func perform(action: RecentArticleAction) -> Observable<RecentArticleResult> {
-        guard case .viewWillAppear = action else {
-            return .empty()
-        }
-
-        return .just(.recentTitle(localization.translate(for: TranslationKey.title)))
+        action
+            .viewWillAppear
+            .map { _ in .recentTitle(self.localization.translate(for: TranslationKey.title)) }
     }
 }
