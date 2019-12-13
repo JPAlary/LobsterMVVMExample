@@ -65,7 +65,7 @@ So, the main motivation was to provide another way of applying MVVM pattern in i
 <p align="center">
     <img src="https://github.com/JPAlary/LobsterMVVMExample/blob/master/Asset/MVVM.png" alt="MVVM schema" align="middle" />
 </p>
-s
+
 <p>
     The communication between the view and view model layers is done with <a href="https://github.com/ReactiveX/RxSwift">RxSwift</a>.
 </p>
