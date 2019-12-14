@@ -97,8 +97,10 @@ So, the main motivation was to provide another way of applying MVVM pattern in i
 <h1>Roadmap</h1>
 
 <ul>
-    <li>[ ] Dependency Injection with <a href="https://github.com/Swinject/Swinject">Swinject</a></li>
+    <li>[ ] Dependency Injection with <a href="https://github.com/hmlongco/Resolver">Resolver</a></li>
     <li>[ ] Navigation (Coordinator or Router)</li>
     <li>[ ] Show article details</li>
+    <li>[ ] Onboarding workflow and logic demonstration</li>
+    <li>[ ] Application configuration</li>
     <li>[ ] Add caching strategy to avoid api request spamming</li>
 </ul>
